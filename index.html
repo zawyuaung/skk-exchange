@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKK Exchange - Compact Landscape Studio & Calculator</title>
+    <!-- HTML to Image Library for High Quality PNG Export -->
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Padauk:wght@700&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .font-header { font-family: 'Montserrat', sans-serif; }
+        .font-myanmar { font-family: 'Padauk', 'Pyidaungsu', sans-serif; }
+        .text-gradient {
+            background: linear-gradient(180deg, #FFE066 0%, #F59E0B 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen flex flex-col xl:flex-row">
+
+    <!-- LEFT SIDE: CONTROL PANEL & CALCULATOR -->
+    <div class="w-full xl:w-1/2 p-4 md:p-6 bg-slate-800 border-r border-slate-700 overflow-y-auto max-h-screen space-y-4">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+            <div>
+                <h1 class="text-xl md:text-2xl font-black text-amber-400 flex items-center gap-2 font-header">
+                    ⚡ SKK STUDIO & CALCULATOR
+                </h1>
+                <p class="text-xs text-slate-400">Compact Landscape Poster Generator & Multi-Tier Calculator</p>
+            </div>
+            <span id="sync-status" class="text-xs bg-emerald-950 text-emerald-300 px-3 py-1 rounded-full font-medium border border-emerald-800">
+                Ready ⚡
+            </span>
+        </div>
+
+        <!-- 1. PRESET & RATE CONTROLS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            
+            <!-- Currency Preset Switcher -->
+            <div class="bg-gradient-to-r from-blue-950 to-slate-900 p-3.5 rounded-xl border border-amber-500/40 shadow-md flex flex-col justify-between">
+                <label class="block text-amber-300 font-bold text-xs mb-1.5 flex items-center gap-1">
+                    ⚡ Quick Currency Pair
+                </label>
+                <select id="preset-switcher" class="w-full bg-slate-800 text-white border border-amber-400 rounded-lg p-2 font-bold text-xs shadow cursor-pointer focus:outline-none" onchange="applyPreset()">
+                    <option value="MMK_IDR" selected>🇲🇲🇮🇩 MMK to IDR (Cells: D43 & D45)</option>
+                    <option value="IDR_MMK">🇮🇩🇲🇲 IDR to MMK (Cells: D32 & D34)</option>
+                </select>
+            </div>
+
+            <!-- Rate Tier Input Fields -->
+            <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 space-y-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-slate-400 text-[11px] mb-1 truncate" id="label-tier1">Top Box (D43)</label>
+                        <input type="text" id="in-tier1" value="370,000" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-bold text-sm text-amber-300" oninput="updatePosterAndCalc()">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 text-[11px] mb-1 truncate" id="label-tier2">Bottom Box (D45)</label>
+                        <input type="text" id="in-tier2" value="371,000" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-white font-bold text-sm text-amber-300" oninput="updatePosterAndCalc()">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Optional Apps Script Sync -->
+        <div class="bg-slate-900 p-3 rounded-xl border border-slate-700">
+            <details class="text-xs text-slate-400">
+                <summary class="cursor-pointer text-amber-400 font-semibold hover:underline">🔗 Advanced: Google Sheets Apps Script Sync</summary>
+                <div class="mt-2 space-y-2">
+                    <input type="text" id="script-url" value="https://script.google.com/macros/s/AKfycbx4erKJPtibkrqd7Vbyc2k-ymemj_RcdLAm8g6UFhLcxiQJDg3unWmSjicgGt3fjkUgRA/exec" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-2 text-[11px] text-amber-300 font-mono">
+                    <button onclick="fetchSheetData()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-1.5 rounded-lg transition text-xs">
+                        🔄 Fetch Latest Rates from Sheet
+                    </button>
+                </div>
+            </details>
+        </div>
+
+        <!-- 2. LIVE EXCHANGE CALCULATOR -->
+        <div class="bg-gradient-to-r from-emerald-950/90 via-slate-900 to-emerald-950/90 p-4 rounded-xl border-2 border-emerald-500/50 space-y-3 shadow-xl">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold text-emerald-300 text-xs md:text-sm flex items-center gap-1.5">
+                    🧮 Live Exchange Calculator
+                </h2>
+                <span id="calc-tier-badge" class="bg-amber-400 text-slate-950 font-black px-2 py-0.5 rounded text-[10px] uppercase">
+                    သိန်း ၅၀ အောက် Rate
+                </span>
+            </div>
+
+            <!-- Mode Tabs -->
+            <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-lg border border-slate-800 text-xs">
+                <button id="tab-mode-input" onclick="setCalcMode('INPUT')" class="py-1.5 rounded font-bold transition bg-emerald-600 text-white shadow">
+                    💵 Customer Has MMK
+                </button>
+                <button id="tab-mode-target" onclick="setCalcMode('TARGET')" class="py-1.5 rounded font-bold transition bg-slate-800 text-slate-400 hover:text-white">
+                    🎯 Customer Wants Exact IDR
+                </button>
+            </div>
+            
+            <div class="space-y-1.5">
+                <label class="block text-slate-300 font-medium text-xs" id="calc-input-label">
+                    Enter MMK Amount Customer Gives
+                </label>
+                <input type="text" id="calc-amount" value="500,000" placeholder="e.g. 500,000 or 18,500,000" class="w-full bg-slate-800 border border-emerald-500/50 rounded-lg p-2 text-white font-black text-base focus:outline-none focus:border-emerald-400" oninput="calculateExchange()">
+            </div>
+
+            <!-- Calculation Output -->
+            <div class="bg-slate-950/80 p-3 rounded-lg border border-slate-800 space-y-1">
+                <div class="flex justify-between text-xs text-slate-400">
+                    <span>Applied Rate Tier:</span>
+                    <span id="calc-applied-rate" class="font-bold text-amber-300">370,000</span>
+                </div>
+                <div class="flex justify-between text-xs text-slate-400">
+                    <span>Formula:</span>
+                    <span id="calc-formula" class="font-mono text-[11px] text-slate-300">500,000 × 370,000 / 100,000</span>
+                </div>
+                <div class="pt-1.5 border-t border-slate-800 flex justify-between items-baseline">
+                    <span class="text-xs font-bold text-emerald-400 uppercase" id="calc-result-label">Result (IDR):</span>
+                    <span id="calc-result" class="text-xl font-black text-emerald-300 drop-shadow">1,850,000 IDR</span>
+                </div>
+            </div>
+
+            <!-- Customer Snippet -->
+            <div class="bg-slate-800/90 p-2.5 rounded-lg border border-slate-700 space-y-1.5">
+                <div class="flex justify-between items-center text-xs">
+                    <span class="text-slate-400 font-semibold">📋 Customer Message Snippet</span>
+                    <button onclick="copySnippet()" id="btn-copy" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded text-xs transition flex items-center gap-1 shadow">
+                        📋 Copy Text
+                    </button>
+                </div>
+                <div id="snippet-text" class="bg-slate-900 p-2 rounded text-xs font-mono text-amber-300 border border-slate-700 select-all font-semibold">
+                    500,000 Ks * Rate 370,000 = 1,850,000 Rp
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. POSTER TEXT & CUSTOMIZATION -->
+        <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 space-y-3 text-xs">
+            <h2 class="font-bold text-slate-300 text-xs uppercase tracking-wider">Poster Details & Media</h2>
+            
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-slate-400 mb-1">Title Text</label>
+                    <input type="text" id="in-title" value="မြန်မာ-အင်ဒိုငွေဈေး" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Direction Label</label>
+                    <input type="text" id="in-direction" value="MMK to IDR" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-slate-400 mb-1">Date & Time</label>
+                    <input type="text" id="in-datetime" value="23/10/2026 10:15 AM" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">Flags</label>
+                    <input type="text" id="in-flags" value="🇲🇲🇮🇩" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-slate-400 mb-1">Bank / Account</label>
+                    <input type="text" id="in-bank" value="BNI Bank - Zaw Yu Aung - 1910987255" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">WhatsApp</label>
+                    <input type="text" id="in-whatsapp" value="+6281386661075 : +95 943189428" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1.5 text-white" oninput="updatePoster()">
+                </div>
+            </div>
+
+            <!-- Media Customization -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 pt-1 border-t border-slate-800">
+                <div>
+                    <label class="block text-slate-400 mb-1">📁 Company Logo Image</label>
+                    <input type="file" id="file-logo" accept="image/*" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1 text-[11px] text-slate-300 file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-amber-500 file:text-slate-950 font-semibold" onchange="handleLogoFileUpload(event)">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">📁 Background Photo</label>
+                    <input type="file" id="file-bg" accept="image/*" class="w-full bg-slate-800 border border-slate-700 rounded-lg p-1 text-[11px] text-slate-300 file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:bg-amber-500 file:text-slate-950 font-semibold" onchange="handleBgFileUpload(event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- DOWNLOAD BUTTON -->
+        <button onclick="downloadLandscapePoster()" class="w-full bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-black py-3.5 px-6 rounded-xl shadow-xl transition transform active:scale-98 flex items-center justify-center gap-2 text-base uppercase tracking-wide">
+            🖼️ Download Landscape Poster (PNG)
+        </button>
+
+    </div>
+
+    <!-- RIGHT SIDE: LANDSCAPE POSTER PREVIEW -->
+    <div class="w-full xl:w-1/2 p-4 md:p-8 flex flex-col items-center justify-center bg-slate-950 overflow-auto min-h-[500px]">
+        
+        <div class="mb-3 text-center">
+            <span class="text-xs font-bold text-amber-400 uppercase tracking-widest bg-amber-950/80 px-3 py-1 rounded-full border border-amber-800">
+                Landscape Poster Preview (640 × 400 Ratio)
+            </span>
+        </div>
+
+        <!-- LANDSCAPE POSTER CONTAINER (640px x 400px) -->
+        <div id="poster-landscape" class="relative w-[640px] h-[400px] min-w-[640px] min-h-[400px] rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between p-5 text-white bg-cover bg-center border-2 border-amber-500/50" style="background-image: url('https://images.unsplash.com/photo-1584646098378-0874589d76b1?q=80&w=1000&auto=format&fit=crop');">
+            
+            <!-- Dark Overlay -->
+            <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-[1.5px] z-0"></div>
+
+            <!-- Content Structure -->
+            <div class="relative z-10 flex flex-col justify-between h-full space-y-2">
+                
+                <!-- TOP BAR: Logo + Header Banner + Title & Date -->
+                <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-2">
+                    
+                    <!-- Left: Logo & Company Banner -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-24 h-12 bg-transparent flex items-center justify-center overflow-hidden">
+                            <img id="out-logo" src="244442335_694182058641278_7886943096117307214_n-3.jpg" alt="SKK Logo" class="object-contain w-full h-full drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]" crossorigin="anonymous" onerror="this.src='https://placehold.co/200x100/1e293b/f59e0b?text=SKK+EXCHANGE'">
+                        </div>
+                        <div>
+                            <div class="font-header font-black text-[11px] tracking-wider bg-gradient-to-r from-blue-900/90 to-blue-950/90 text-amber-300 px-3 py-0.5 rounded-full border border-amber-400/40 uppercase shadow">
+                                SKK EXCHANGE <span class="text-white font-normal text-[9px]">(SGD, THB, IDR, MMK)</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 mt-1">
+                                <span id="out-flags" class="text-lg">🇲🇲🇮🇩</span>
+                                <h1 id="out-title" class="font-myanmar font-bold text-lg text-gradient drop-shadow leading-none">
+                                    မြန်မာ-အင်ဒိုငွေဈေး
+                                </h1>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Date & Time Badge -->
+                    <div class="text-right">
+                        <span id="out-datetime" class="bg-purple-950/90 text-purple-200 text-[10px] font-semibold px-2.5 py-1 rounded-full border border-purple-400/40 shadow inline-block">
+                            23/10/2026 10:15 AM
+                        </span>
+                    </div>
+                </div>
+
+                <!-- MIDDLE BAR: SIDE-BY-SIDE COMPACT TIER CARDS -->
+                <div class="grid grid-cols-2 gap-3.5 my-auto">
+                    
+                    <!-- Tier 1 Card -->
+                    <div class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl p-3 border-2 border-amber-400/50 shadow-xl flex flex-col justify-between space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded shadow uppercase tracking-wide">
+                                mmk သိန်း ၅၀ အောက်
+                            </span>
+                            <span id="lbl-cell1" class="text-[9px] text-slate-400 font-mono">Cell: D43</span>
+                        </div>
+                        <div class="flex justify-between items-baseline pt-1">
+                            <span id="out-direction1" class="text-xs font-extrabold text-cyan-300">MMK to IDR</span>
+                            <span id="out-tier1" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-md">370,000</span>
+                        </div>
+                    </div>
+
+                    <!-- Tier 2 Card -->
+                    <div class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl p-3 border-2 border-amber-400/50 shadow-xl flex flex-col justify-between space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2.5 py-0.5 rounded shadow uppercase tracking-wide">
+                                mmk သိန်း ၅၀ အထက်
+                            </span>
+                            <span id="lbl-cell2" class="text-[9px] text-slate-400 font-mono">Cell: D45</span>
+                        </div>
+                        <div class="flex justify-between items-baseline pt-1">
+                            <span id="out-direction2" class="text-xs font-extrabold text-cyan-300">MMK to IDR</span>
+                            <span id="out-tier2" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-md">371,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BOTTOM BAR: Bank Details & WhatsApp Contact -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-center pt-1 border-t border-white/10">
+                    <div id="out-bank" class="bg-black/70 text-slate-200 text-[11px] py-1.5 px-2 rounded-lg border border-slate-700/80 font-bold tracking-wide truncate">
+                        BNI Bank - Zaw Yu Aung - 1910987255
+                    </div>
+                    <div class="flex items-center justify-center gap-1 text-[11px] font-bold bg-emerald-950/90 text-emerald-300 py-1.5 px-2 rounded-lg border border-emerald-400/40 shadow">
+                        <span>📲 Whatsapp :</span>
+                        <span id="out-whatsapp" class="text-white font-extrabold truncate">+6281386661075 : +95 943189428</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        let calcMode = 'INPUT'; // 'INPUT' = Has MMK, 'TARGET' = Wants Exact IDR
+
+        function setCalcMode(mode) {
+            calcMode = mode;
+            const btnInput = document.getElementById('tab-mode-input');
+            const btnTarget = document.getElementById('tab-mode-target');
+            const lblInput = document.getElementById('calc-input-label');
+
+            if (mode === 'INPUT') {
+                btnInput.className = "py-1.5 rounded font-bold transition bg-emerald-600 text-white shadow";
+                btnTarget.className = "py-1.5 rounded font-bold transition bg-slate-800 text-slate-400 hover:text-white";
+                lblInput.textContent = "Enter MMK Amount Customer Gives";
+                document.getElementById('calc-amount').value = "500,000";
+            } else {
+                btnTarget.className = "py-1.5 rounded font-bold transition bg-emerald-600 text-white shadow";
+                btnInput.className = "py-1.5 rounded font-bold transition bg-slate-800 text-slate-400 hover:text-white";
+                lblInput.textContent = "Enter Exact IDR Amount Customer Wants";
+                document.getElementById('calc-amount').value = "2,000,000";
+            }
+            calculateExchange();
+        }
+
+        function applyPreset() {
+            const preset = document.getElementById('preset-switcher').value;
+
+            if (preset === 'MMK_IDR') {
+                document.getElementById('label-tier1').textContent = 'Top Box (D43)';
+                document.getElementById('label-tier2').textContent = 'Bottom Box (D45)';
+                document.getElementById('lbl-cell1').textContent = 'Cell: D43';
+                document.getElementById('lbl-cell2').textContent = 'Cell: D45';
+                document.getElementById('in-tier1').value = '370,000';
+                document.getElementById('in-tier2').value = '371,000';
+                document.getElementById('in-title').value = 'မြန်မာ-အင်ဒိုငွေဈေး';
+                document.getElementById('in-direction').value = 'MMK to IDR';
+                document.getElementById('in-flags').value = '🇲🇲🇮🇩';
+            } else if (preset === 'IDR_MMK') {
+                document.getElementById('label-tier1').textContent = 'Top Box (D32)';
+                document.getElementById('label-tier2').textContent = 'Bottom Box (D34)';
+                document.getElementById('lbl-cell1').textContent = 'Cell: D32';
+                document.getElementById('lbl-cell2').textContent = 'Cell: D34';
+                document.getElementById('in-tier1').value = '397,000';
+                document.getElementById('in-tier2').value = '395,000';
+                document.getElementById('in-title').value = 'အင်ဒို-မြန်မာငွေဈေး';
+                document.getElementById('in-direction').value = 'IDR to MMK';
+                document.getElementById('in-flags').value = '🇮🇩🇲🇲';
+            }
+            updatePosterAndCalc();
+        }
+
+        function cleanNumber(val) {
+            if (!val) return 0;
+            let num = parseFloat(val.toString().replace(/,/g, '').trim());
+            return isNaN(num) ? 0 : num;
+        }
+
+        function formatNumber(val) {
+            if (val === undefined || val === null) return '';
+            let numStr = val.toString().replace(/,/g, '').trim();
+            if (!isNaN(numStr) && numStr !== '') {
+                return Number(numStr).toLocaleString();
+            }
+            return val;
+        }
+
+        function calculateExchange() {
+            const preset = document.getElementById('preset-switcher').value;
+            const rawAmount = document.getElementById('calc-amount').value;
+            const amount = cleanNumber(rawAmount);
+
+            const rateTier1 = cleanNumber(document.getElementById('in-tier1').value);
+            const rateTier2 = cleanNumber(document.getElementById('in-tier2').value);
+
+            let appliedRate = 0;
+            let badgeText = "";
+            let resultText = "";
+            let formulaText = "";
+            let snippet = "";
+
+            if (preset === 'MMK_IDR') {
+                // MMK -> IDR
+                if (calcMode === 'INPUT') {
+                    // Customer gives MMK
+                    document.getElementById('calc-result-label').textContent = "Result (IDR):";
+                    if (amount < 5000000) {
+                        appliedRate = rateTier1;
+                        badgeText = "သိန်း ၅၀ အောက် Rate";
+                    } else {
+                        appliedRate = rateTier2;
+                        badgeText = "သိန်း ၅၀ အထက် Rate";
+                    }
+
+                    const resultIDR = Math.round((amount * appliedRate) / 100000);
+                    resultText = formatNumber(resultIDR) + " IDR";
+                    formulaText = `${formatNumber(amount)} × ${formatNumber(appliedRate)} / 100,000`;
+                    snippet = `${formatNumber(amount)} Ks * Rate ${formatNumber(appliedRate)} = ${formatNumber(resultIDR)} Rp`;
+
+                } else {
+                    // Customer wants exact IDR -> Calculate required MMK using 2-Pass threshold check
+                    document.getElementById('calc-result-label').textContent = "Required Payment (MMK):";
+                    
+                    // Pass 1: Tentative check with Tier 1
+                    let testMMK = (amount / rateTier1) * 100000;
+                    
+                    // Pass 2: Select tier based on RESULTING MMK threshold (5,000,000 MMK)
+                    if (testMMK < 5000000) {
+                        appliedRate = rateTier1;
+                        badgeText = "သိန်း ၅၀ အောက် Rate";
+                    } else {
+                        appliedRate = rateTier2;
+                        badgeText = "သိန်း ၅၀ အထက် Rate";
+                    }
+
+                    let requiredMMK = Math.round((amount / appliedRate) * 100000);
+
+                    resultText = formatNumber(requiredMMK) + " MMK";
+                    formulaText = `${formatNumber(amount)} / ${formatNumber(appliedRate)} × 100,000`;
+                    snippet = `${formatNumber(amount)} Rp / Rate ${formatNumber(appliedRate)} = ${formatNumber(requiredMMK)} Ks`;
+                }
+
+            } else if (preset === 'IDR_MMK') {
+                // IDR -> MMK
+                if (calcMode === 'INPUT') {
+                    // Customer gives MMK
+                    document.getElementById('calc-result-label').textContent = "Result (IDR):";
+                    
+                    if (amount < 5000000) {
+                        appliedRate = rateTier1;
+                        badgeText = "သိန်း ၅၀ အောက် Rate";
+                    } else {
+                        appliedRate = rateTier2;
+                        badgeText = "သိန်း ၅၀ အထက် Rate";
+                    }
+
+                    const resultIDR = Math.round((amount / 100000) * appliedRate);
+                    resultText = formatNumber(resultIDR) + " IDR";
+                    formulaText = `${formatNumber(amount)} / 100,000 × ${formatNumber(appliedRate)}`;
+                    snippet = `${formatNumber(amount)} Ks / 100,000 * Rate ${formatNumber(appliedRate)} = ${formatNumber(resultIDR)} Rp`;
+
+                } else {
+                    // Customer wants exact IDR
+                    document.getElementById('calc-result-label').textContent = "Required Payment (MMK):";
+                    
+                    let testMMK = (amount / rateTier1) * 100000;
+                    if (testMMK < 5000000) {
+                        appliedRate = rateTier1;
+                        badgeText = "သိန်း ၅၀ အောက် Rate";
+                    } else {
+                        appliedRate = rateTier2;
+                        badgeText = "သိန်း ၅၀ အထက် Rate";
+                    }
+
+                    let requiredMMK = Math.round((amount / appliedRate) * 100000);
+
+                    resultText = formatNumber(requiredMMK) + " MMK";
+                    formulaText = `${formatNumber(amount)} / ${formatNumber(appliedRate)} × 100,000`;
+                    snippet = `${formatNumber(amount)} Rp / Rate ${formatNumber(appliedRate)} * 100,000 = ${formatNumber(requiredMMK)} Ks`;
+                }
+            }
+
+            // Update DOM
+            document.getElementById('calc-tier-badge').textContent = badgeText;
+            document.getElementById('calc-applied-rate').textContent = formatNumber(appliedRate);
+            document.getElementById('calc-formula').textContent = formulaText;
+            document.getElementById('calc-result').textContent = resultText;
+            document.getElementById('snippet-text').textContent = snippet;
+        }
+
+        function copySnippet() {
+            const text = document.getElementById('snippet-text').textContent.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.getElementById('btn-copy');
+                btn.textContent = 'Copied! ✓';
+                btn.className = 'bg-emerald-500 text-slate-950 font-bold px-2.5 py-1 rounded text-xs transition flex items-center gap-1 shadow';
+                setTimeout(() => {
+                    btn.textContent = '📋 Copy Text';
+                    btn.className = 'bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded text-xs transition flex items-center gap-1 shadow';
+                }, 1800);
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        function updatePosterAndCalc() {
+            updatePoster();
+            calculateExchange();
+        }
+
+        function updatePoster() {
+            document.getElementById('out-title').textContent = document.getElementById('in-title').value;
+            document.getElementById('out-flags').textContent = document.getElementById('in-flags').value;
+            document.getElementById('out-datetime').textContent = document.getElementById('in-datetime').value;
+            
+            const dirVal = document.getElementById('in-direction').value;
+            document.getElementById('out-direction1').textContent = dirVal;
+            document.getElementById('out-direction2').textContent = dirVal;
+
+            document.getElementById('out-tier1').textContent = formatNumber(document.getElementById('in-tier1').value);
+            document.getElementById('out-tier2').textContent = formatNumber(document.getElementById('in-tier2').value);
+
+            document.getElementById('out-bank').textContent = document.getElementById('in-bank').value;
+            document.getElementById('out-whatsapp').textContent = document.getElementById('in-whatsapp').value;
+        }
+
+        function handleLogoFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('out-logo').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleBgFileUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('poster-landscape').style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function fetchSheetData() {
+            const scriptUrl = document.getElementById('script-url').value.trim();
+            const preset = document.getElementById('preset-switcher').value;
+            let c1 = 'D43', c2 = 'D45';
+            if (preset === 'IDR_MMK') { c1 = 'D32'; c2 = 'D34'; }
+
+            const statusEl = document.getElementById('sync-status');
+            statusEl.textContent = 'Syncing...';
+            statusEl.className = 'text-xs bg-amber-950 text-amber-300 px-3 py-1 rounded-full font-medium border border-amber-800';
+
+            try {
+                const response = await fetch(`${scriptUrl}?c1=${c1}&c2=${c2}`);
+                if (!response.ok) throw new Error('Network error');
+                
+                const data = await response.json();
+                if (data.v1 !== undefined && data.v1 !== '') document.getElementById('in-tier1').value = data.v1;
+                if (data.v2 !== undefined && data.v2 !== '') document.getElementById('in-tier2').value = data.v2;
+
+                statusEl.textContent = 'Synced ⚡';
+                statusEl.className = 'text-xs bg-emerald-950 text-emerald-300 px-3 py-1 rounded-full font-medium border border-emerald-800';
+                
+                updatePosterAndCalc();
+            } catch (err) {
+                console.error('Fetch error:', err);
+                statusEl.textContent = 'Sync Failed';
+                statusEl.className = 'text-xs bg-red-950 text-red-300 px-3 py-1 rounded-full font-medium border border-red-800';
+            }
+        }
+
+        function downloadLandscapePoster() {
+            const poster = document.getElementById('poster-landscape');
+            htmlToImage.toPng(poster, { quality: 1.0, pixelRatio: 3, cacheBust: true })
+                .then(function (dataUrl) {
+                    const link = document.createElement('a');
+                    link.download = 'SKK-Landscape-Exchange-Rate.png';
+                    link.href = dataUrl;
+                    link.click();
+                })
+                .catch(function (error) {
+                    console.error('Download error:', error);
+                });
+        }
+
+        // Initialize on page load
+        window.onload = () => updatePosterAndCalc();
+    </script>
+</body>
+</html>
