@@ -41,7 +41,6 @@
             </div>
             
             <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
-                <!-- Small Low-Res Download Button on Top -->
                 <button onclick="downloadPosterLowRes()" title="Download Low-Res Poster" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold px-2 py-1 rounded text-[10px] border border-amber-500/40 shadow transition flex items-center gap-1">
                     ⚡ Low-Res
                 </button>
@@ -563,10 +562,11 @@
                 formulaText = `${formatNumber(amount)} × ${formatNumber(appliedRate)} / 100,000`;
                 calcSnippet = `${formatNumber(amount)} Ks * Rate ${formatNumber(appliedRate)} = ${formatNumber(resultVal)} Rp`;
             } else if (preset === 'IDR_MMK') {
-                appliedRate = (isSpecialOverride || amount >= 5000000) ? rateTier2 : rateTier1;
-                resultVal = Math.round((amount / 100000) * appliedRate);
-                formulaText = `${formatNumber(amount)} / 100,000 × ${formatNumber(appliedRate)}`;
-                calcSnippet = `${formatNumber(amount)} Rp / 100,000 * Rate ${formatNumber(appliedRate)} = ${formatNumber(resultVal)} Ks`;
+                let calculatedMmkForTier = rateTier1 > 0 ? (amount / rateTier1) * 100000 : 0;
+                appliedRate = (isSpecialOverride || calculatedMmkForTier >= 5000000) ? rateTier2 : rateTier1;
+                resultVal = appliedRate > 0 ? Math.round((amount / appliedRate) * 100000) : 0;
+                formulaText = `(${formatNumber(amount)} / ${formatNumber(appliedRate)}) × 100,000`;
+                calcSnippet = `${formatNumber(amount)} Rp * Rate ${formatNumber(appliedRate)} = ${formatNumber(resultVal)} Ks`;
             } else if (preset === 'IDR_THB') {
                 appliedRate = rateTier1;
                 resultVal = rateTier1 > 0 ? (amount / rateTier1).toFixed(2) : 0;
@@ -628,11 +628,10 @@
                 formulaText = `(${formatNumber(resAmount)} / ${formatNumber(appliedRate)}) × 100,000`;
                 calcSnippet = `${formatNumber(inputVal)} Ks * Rate ${formatNumber(appliedRate)} = ${formatNumber(resAmount)} Rp`;
             } else if (preset === 'IDR_MMK') {
-                let testMmk = rateTier1 > 0 ? (resAmount / rateTier1) * 100000 : 0;
-                appliedRate = (isSpecialOverride || testMmk >= 5000000) ? rateTier2 : rateTier1;
-                inputVal = appliedRate > 0 ? Math.round((resAmount / appliedRate) * 100000) : 0;
-                formulaText = `(${formatNumber(resAmount)} / ${formatNumber(appliedRate)}) × 100,000`;
-                calcSnippet = `${formatNumber(inputVal)} Rp / 100,000 * Rate ${formatNumber(appliedRate)} = ${formatNumber(resAmount)} Ks`;
+                appliedRate = (isSpecialOverride || resAmount >= 5000000) ? rateTier2 : rateTier1;
+                inputVal = Math.round((resAmount * appliedRate) / 100000);
+                formulaText = `${formatNumber(resAmount)} × ${formatNumber(appliedRate)} / 100,000`;
+                calcSnippet = `${formatNumber(inputVal)} Rp * Rate ${formatNumber(appliedRate)} = ${formatNumber(resAmount)} Ks`;
             } else if (preset === 'IDR_THB') {
                 appliedRate = rateTier1;
                 inputVal = Math.round(resAmount * appliedRate);
@@ -823,19 +822,17 @@
 
         async function downloadPoster() {
             const poster = document.getElementById('poster');
-            const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
-
             try {
                 await convertPosterImagesToBase64();
-                if (isAppleWebKit) {
-                    await htmlToImage.toPng(poster, { cacheBust: true });
-                    await new Promise(resolve => setTimeout(resolve, 400));
-                }
-                const dataUrl = await htmlToImage.toPng(poster, { quality: 1.0, pixelRatio: 3, cacheBust: true });
+                const blob = await htmlToImage.toBlob(poster, { quality: 1.0, pixelRatio: 3, cacheBust: true });
+                const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a'); 
                 a.download = 'SKK-Exchange-Poster.png'; 
-                a.href = dataUrl; 
+                a.href = blobUrl; 
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
             } catch (err) {
                 console.error('Export Error:', err);
                 alert("Poster export Error. Please try again.");
@@ -844,19 +841,17 @@
 
         async function downloadPosterLowRes() {
             const poster = document.getElementById('poster');
-            const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
-
             try {
                 await convertPosterImagesToBase64();
-                if (isAppleWebKit) {
-                    await htmlToImage.toPng(poster, { cacheBust: true });
-                    await new Promise(resolve => setTimeout(resolve, 400));
-                }
-                const dataUrl = await htmlToImage.toPng(poster, { quality: 0.7, pixelRatio: 1, cacheBust: true });
+                const blob = await htmlToImage.toBlob(poster, { quality: 0.8, pixelRatio: 1, cacheBust: true });
+                const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a'); 
                 a.download = 'SKK-Exchange-Poster-LowRes.png'; 
-                a.href = dataUrl; 
+                a.href = blobUrl; 
+                document.body.appendChild(a);
                 a.click();
+                document.body.removeChild(a);
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
             } catch (err) {
                 console.error('Export Error:', err);
                 alert("Poster export Error. Please try again.");
