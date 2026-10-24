@@ -31,19 +31,26 @@
     <!-- CONTROL PANEL -->
     <div id="control-panel" class="w-full lg:w-2/3 p-3 bg-slate-800 border-r border-slate-700 overflow-y-auto h-screen space-y-2.5 transition-all duration-300">
         
-        <!-- HEADER & CURRENCY PAIR SELECTOR + POSTER TOGGLE BUTTON -->
-        <div class="flex items-center justify-between bg-gradient-to-r from-blue-950 to-slate-900 p-2.5 rounded-lg border border-amber-500/40 shadow">
+        <!-- HEADER & CONTROLS -->
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-2 bg-gradient-to-r from-blue-950 to-slate-900 p-2.5 rounded-lg border border-amber-500/40 shadow">
             <div>
                 <h1 class="text-base font-black text-amber-400 font-header leading-none">
-                    ⚡ SKK INSTANT STUDIO & CALCULATOR
+                    ⚡ SKK STUDIO & CALCULATOR
                 </h1>
                 <p class="text-[10px] text-slate-400 mt-0.5">Compact Multi-Currency Dashboard</p>
             </div>
-            <div class="flex items-center gap-1.5">
-                <button onclick="togglePosterPreview()" id="btn-toggle-poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2.5 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
+            
+            <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
+                <!-- Small Low-Res Download Button on Top -->
+                <button onclick="downloadPosterLowRes()" title="Download Low-Res Poster" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold px-2 py-1 rounded text-[10px] border border-amber-500/40 shadow transition flex items-center gap-1">
+                    ⚡ Low-Res
+                </button>
+                
+                <button onclick="togglePosterPreview()" id="btn-toggle-poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
                     👁️ <span id="toggle-poster-text">Hide Poster</span>
                 </button>
-                <div class="w-36 lg:w-44">
+
+                <div class="w-32 lg:w-36">
                     <select id="preset-switcher" class="w-full bg-slate-800 text-amber-300 border border-amber-400 rounded-md p-1 font-bold text-[11px] shadow focus:outline-none" onchange="applyPreset()">
                         <option value="MMK_IDR" selected>🇲🇲🇮🇩 MMK to IDR</option>
                         <option value="IDR_MMK">🇮🇩🇲🇲 IDR to MMK</option>
@@ -343,9 +350,6 @@
         <div class="w-full max-w-[280px] space-y-2 pt-1">
             <button onclick="downloadPoster()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center gap-1 text-xs">
                 📥 Download High-Res Poster
-            </button>
-            <button onclick="downloadPosterLowRes()" class="w-full bg-slate-800 hover:bg-slate-700 text-amber-300 font-bold py-1.5 px-3 rounded-lg border border-amber-500/40 transition text-[11px]">
-                ⚡ Download Low-Res Poster
             </button>
         </div>
     </div>
