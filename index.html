@@ -41,11 +41,14 @@
             </div>
             
             <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
+                <button onclick="downloadPoster()" title="Download High-Res Poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
+                    📥 High-Res
+                </button>
                 <button onclick="downloadPosterLowRes()" title="Download Low-Res Poster" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold px-2 py-1 rounded text-[10px] border border-amber-500/40 shadow transition flex items-center gap-1">
                     ⚡ Low-Res
                 </button>
                 
-                <button onclick="togglePosterPreview()" id="btn-toggle-poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
+                <button onclick="togglePosterPreview()" id="btn-toggle-poster" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
                     👁️ <span id="toggle-poster-text">Hide Poster</span>
                 </button>
 
@@ -344,12 +347,6 @@
                 </div>
 
             </div>
-        </div>
-
-        <div class="w-full max-w-[280px] space-y-2 pt-1">
-            <button onclick="downloadPoster()" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-slate-950 font-black py-2.5 px-3 rounded-lg shadow transition flex items-center justify-center gap-1 text-xs">
-                📥 Download High-Res Poster
-            </button>
         </div>
     </div>
 
@@ -822,8 +819,14 @@
 
         async function downloadPoster() {
             const poster = document.getElementById('poster');
+            const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+
             try {
                 await convertPosterImagesToBase64();
+                if (isAppleWebKit) {
+                    await htmlToImage.toPng(poster, { cacheBust: true });
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                }
                 const blob = await htmlToImage.toBlob(poster, { quality: 1.0, pixelRatio: 3, cacheBust: true });
                 const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a'); 
@@ -841,8 +844,14 @@
 
         async function downloadPosterLowRes() {
             const poster = document.getElementById('poster');
+            const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+
             try {
                 await convertPosterImagesToBase64();
+                if (isAppleWebKit) {
+                    await htmlToImage.toPng(poster, { cacheBust: true });
+                    await new Promise(resolve => setTimeout(resolve, 400));
+                }
                 const blob = await htmlToImage.toBlob(poster, { quality: 0.8, pixelRatio: 1, cacheBust: true });
                 const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a'); 
