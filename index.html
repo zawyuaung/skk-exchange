@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKK Exchange - Compact Poster Studio & Calculator</title>
+    <title>SKK Exchange - Studio, Calculator & Accounting Ledger</title>
     <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@800;900&family=Padauk:wght@700&family=Poppins:wght@500;700;800;900&display=swap" rel="stylesheet">
@@ -37,15 +37,16 @@
                 <h1 class="text-base font-black text-amber-400 font-header leading-none">
                     ⚡ SKK STUDIO & CALCULATOR
                 </h1>
-                <p class="text-[10px] text-slate-400 mt-0.5">Compact Multi-Currency Dashboard</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Multi-Currency Dashboard & Accounting Ledger</p>
             </div>
             
             <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto justify-end">
-                <button onclick="downloadPoster()" title="Download High-Res Poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
-                    📥 High-Res
+                <!-- TOP DOWNLOAD BUTTONS (MID-RES & HIGH-RES) -->
+                <button onclick="downloadPosterMedium()" title="Standard Balanced Resolution PNG" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-2.5 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
+                    📥 Download PNG
                 </button>
-                <button onclick="downloadPosterLowRes()" title="Download Low-Res Poster" class="bg-slate-700 hover:bg-slate-600 text-amber-300 font-bold px-2 py-1 rounded text-[10px] border border-amber-500/40 shadow transition flex items-center gap-1">
-                    ⚡ Low-Res
+                <button onclick="downloadPosterHighRes()" title="High Resolution Poster" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
+                    🌟 High-Res
                 </button>
                 
                 <button onclick="togglePosterPreview()" id="btn-toggle-poster" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-2 py-1 rounded text-[10px] shadow transition flex items-center gap-1">
@@ -195,157 +196,180 @@
 
         </div>
 
-        <!-- TRANSACTION LEDGER -->
-        <div class="bg-slate-900 p-2.5 rounded-lg border border-indigo-500/40 space-y-2 shadow">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-1">
-                <h2 class="font-bold text-indigo-300 text-xs flex items-center gap-1">📝 Customer Record & Cash Flow</h2>
-                <input type="date" id="filter-date" class="bg-slate-800 text-amber-300 font-bold text-[10px] p-1 rounded border border-slate-700" onchange="renderTransactionTable()">
+        <!-- PROFESSIONAL MULTI-CURRENCY ACCOUNTING LEDGER -->
+        <div class="bg-slate-900 p-3 rounded-lg border border-indigo-500/40 space-y-2.5 shadow">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-800 pb-1.5 gap-2">
+                <h2 class="font-bold text-indigo-300 text-xs flex items-center gap-1">
+                    📊 Multi-Currency Accounting & Monthly Statement
+                </h2>
+                <div class="flex items-center gap-1.5 text-[10px]">
+                    <label class="text-slate-400">Month Filter:</label>
+                    <input type="month" id="filter-month" class="bg-slate-800 text-amber-300 font-bold p-1 rounded border border-slate-700" onchange="renderTransactionTable()">
+                    <button onclick="setCurrentMonthFilter()" class="bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded">This Month</button>
+                </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-1.5 text-[10px]">
+            <!-- TRANSACTION ENTRY INPUTS -->
+            <div class="grid grid-cols-2 sm:grid-cols-6 gap-1.5 text-[10px]">
+                <input type="date" id="rec-date" class="bg-slate-800 border border-slate-700 rounded p-1 text-amber-300 font-bold">
                 <input type="text" id="rec-name" placeholder="ဝယ်သူအမည်" class="bg-slate-800 border border-slate-700 rounded p-1 text-white">
-                <input type="text" id="rec-in-amt" placeholder="ပေးချေငွေ" class="bg-slate-800 border border-slate-700 rounded p-1 text-amber-300 font-bold">
-                <input type="text" id="rec-out-amt" placeholder="ရရှိငွေ" class="bg-slate-800 border border-slate-700 rounded p-1 text-emerald-300 font-bold">
+                <select id="rec-currency-pair" class="bg-slate-800 text-amber-300 border border-slate-700 rounded p-1 font-bold">
+                    <option value="MMK_IDR">🇲🇲 MMK ➔ 🇮🇩 IDR</option>
+                    <option value="IDR_MMK">🇮🇩 IDR ➔ 🇲🇲 MMK</option>
+                    <option value="MMK_THB">🇲🇲 MMK ➔ 🇹🇭 THB</option>
+                    <option value="THB_MMK">🇹🇭 THB ➔ 🇲🇲 MMK</option>
+                    <option value="IDR_THB">🇮🇩 IDR ➔ 🇹🇭 THB</option>
+                    <option value="THB_IDR">🇹🇭 THB ➔ 🇮🇩 IDR</option>
+                    <option value="SGD_MMK">🇸🇬 SGD ➔ 🇲🇲 MMK</option>
+                    <option value="MMK_SGD">🇲🇲 MMK ➔ 🇸🇬 SGD</option>
+                    <option value="OTHER">🌐 Custom Currency</option>
+                </select>
+                <input type="text" id="rec-in-amt" placeholder="ပေးချေငွေ (Cash-In)" class="bg-slate-800 border border-slate-700 rounded p-1 text-amber-300 font-bold">
+                <input type="text" id="rec-out-amt" placeholder="ရရှိငွေ (Cash-Out)" class="bg-slate-800 border border-slate-700 rounded p-1 text-emerald-300 font-bold">
                 <input type="text" id="rec-bank" placeholder="ဘဏ် (Kpay/BNI)" class="bg-slate-800 border border-slate-700 rounded p-1 text-white">
             </div>
 
             <div class="flex gap-2">
-                <button onclick="addTransactionRecord()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-1 rounded shadow text-xs">
-                    ➕ စာရင်းသွင်းမည် (Add Record)
+                <button onclick="addTransactionRecord()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-1.5 rounded shadow text-xs flex items-center justify-center gap-1">
+                    ➕ စာရင်းသွင်းမည် (Add Entry)
                 </button>
-                <button onclick="exportTransactionsCSV()" class="text-[10px] bg-slate-800 text-emerald-400 font-semibold px-2 rounded border border-slate-700">CSV</button>
-                <button onclick="clearAllTransactions()" class="text-[10px] bg-slate-800 text-rose-400 font-semibold px-2 rounded border border-slate-700">Clear</button>
+                <button onclick="exportTransactionsCSV()" class="text-[10px] bg-slate-800 text-emerald-400 font-semibold px-3 rounded border border-slate-700 hover:bg-slate-700">CSV Export</button>
+                <button onclick="clearAllTransactions()" class="text-[10px] bg-slate-800 text-rose-400 font-semibold px-3 rounded border border-slate-700 hover:bg-slate-700">Clear All</button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-[10px]">
-                <div class="bg-slate-950/60 p-1.5 rounded border border-slate-800">
-                    <div class="flex justify-between font-bold text-amber-400 border-b border-slate-800 pb-0.5">
-                        <span>🇲🇲➡️🇮🇩 MMK to IDR</span>
-                        <span id="group1-total" class="font-mono text-emerald-400">Total: 0 MMK</span>
-                    </div>
-                    <div class="max-h-20 overflow-y-auto">
-                        <table class="w-full text-left text-[10px] text-slate-300"><tbody id="group1-tbody"></tbody></table>
-                    </div>
-                </div>
-
-                <div class="bg-slate-950/60 p-1.5 rounded border border-slate-800">
-                    <div class="flex justify-between font-bold text-cyan-400 border-b border-slate-800 pb-0.5">
-                        <span>🇮🇩➡️🇲🇲 IDR to MMK</span>
-                        <span id="group2-total" class="font-mono text-emerald-400">Total: 0 MMK</span>
-                    </div>
-                    <div class="max-h-20 overflow-y-auto">
-                        <table class="w-full text-left text-[10px] text-slate-300"><tbody id="group2-tbody"></tbody></table>
-                    </div>
-                </div>
+            <!-- ACCOUNTING STATEMENT SUMMARY TABLE -->
+            <div class="max-h-40 overflow-y-auto bg-slate-950 rounded border border-slate-800">
+                <table class="w-full text-left text-[10px] text-slate-300">
+                    <thead class="bg-slate-800 text-slate-400 sticky top-0 font-bold border-b border-slate-700">
+                        <tr>
+                            <th class="p-1.5">Date</th>
+                            <th class="p-1.5">Customer</th>
+                            <th class="p-1.5">Pair</th>
+                            <th class="p-1.5 text-right">Cash-In</th>
+                            <th class="p-1.5 text-right">Cash-Out</th>
+                            <th class="p-1.5">Bank</th>
+                            <th class="p-1.5 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ledger-tbody"></tbody>
+                </table>
             </div>
 
-            <div id="summary-container" class="p-1.5 bg-slate-950 rounded border border-indigo-500/30 text-[10px]">
-                <div id="summary-details" class="text-slate-300">
-                    <span class="text-slate-500 italic">စာရင်းထည့်ပါက Net Summary ပေါ်ပါမည်။</span>
+            <!-- FINANCIAL SUMMARY STATS (ACCOUNTANT VIEW) -->
+            <div id="monthly-summary-box" class="p-2.5 bg-slate-950/90 rounded border border-indigo-500/30 text-[11px] space-y-1">
+                <div class="flex justify-between items-center font-bold text-amber-400 border-b border-slate-800 pb-1">
+                    <span>📈 Selected Month Financial Statement:</span>
+                    <span id="summary-month-label" class="text-slate-300 font-normal">All Records</span>
+                </div>
+                <div id="summary-breakdown" class="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px]">
+                    <!-- Dynamically Injected -->
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- POSTER PREVIEW & DOWNLOAD (TOGGLEABLE) -->
+    <!-- POSTER PREVIEW & DOWNLOAD (EXACT CROP BOX) -->
     <div id="poster-sidebar" class="w-full lg:w-1/3 p-3 flex flex-col items-center justify-center bg-slate-950 h-screen border-t lg:border-t-0 border-slate-800 space-y-3 transition-all duration-300">
         <span class="text-[11px] font-bold text-amber-400 uppercase tracking-widest">Live Poster Preview</span>
         
-        <div id="poster" class="relative w-[640px] h-[330px] rounded-2xl overflow-hidden shadow-2xl flex flex-col justify-between p-2.5 text-white border-2 border-amber-500/40 bg-slate-950 transform scale-[0.55] sm:scale-[0.7] lg:scale-[0.8] xl:scale-[0.85] origin-center">
-            
-            <div class="absolute inset-0 z-0 overflow-hidden flex">
-                <div class="relative w-3/5 h-full overflow-hidden filter brightness-90 saturate-125 bg-left-mask z-10">
-                    <img id="img-bg-left" src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600&auto=format&fit=crop" crossorigin="anonymous" alt="Left BG" class="absolute inset-0 w-full h-full object-cover">
-                </div>
-                <div class="relative w-3/5 -ml-[20%] h-full overflow-hidden filter brightness-90 saturate-125 bg-right-mask z-0">
-                    <img id="img-bg-right" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop" crossorigin="anonymous" alt="Right BG" class="absolute inset-0 w-full h-full object-cover">
-                </div>
-            </div>
-
-            <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/90 backdrop-blur-[0.5px] z-10"></div>
-
-            <div class="absolute inset-0 pointer-events-none overflow-hidden z-10 opacity-20">
-                <span class="absolute top-2 left-6 text-5xl font-black text-amber-400 rotate-[-15deg]">💵</span>
-                <span class="absolute bottom-4 left-16 text-6xl font-black text-emerald-400 rotate-[20deg]">Rp</span>
-                <span class="absolute top-3 right-8 text-6xl font-black text-yellow-400 rotate-[15deg]">฿</span>
-                <span class="absolute bottom-6 right-12 text-5xl font-black text-purple-400 rotate-[-25deg]">SGD</span>
-            </div>
-
-            <div class="relative z-20 flex flex-col justify-between h-full space-y-0">
+        <!-- WRAPPER TO CUT EXTRA CORNER SPACES -->
+        <div id="poster-wrapper" class="overflow-hidden rounded-2xl flex items-center justify-center p-0 m-0 border-2 border-amber-500/40 shadow-2xl">
+            <div id="poster" class="relative w-[640px] h-[330px] flex flex-col justify-between p-2.5 text-white bg-slate-950 transform scale-[0.55] sm:scale-[0.7] lg:scale-[0.8] xl:scale-[0.85] origin-center">
                 
-                <div class="flex items-center justify-center gap-4 px-4 py-0.5 mx-auto w-full">
-                    <div class="w-20 h-20 flex items-center justify-center flex-shrink-0">
-                        <img id="out-logo" src="logo_3.png" crossorigin="anonymous" alt="SKK Logo" class="w-full h-full object-contain filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.95)] scale-110" onerror="this.onerror=null; this.src='./logo_3.png';">
+                <div class="absolute inset-0 z-0 overflow-hidden flex">
+                    <div class="relative w-3/5 h-full overflow-hidden filter brightness-90 saturate-125 bg-left-mask z-10">
+                        <img id="img-bg-left" src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=600&auto=format&fit=crop" crossorigin="anonymous" alt="Left BG" class="absolute inset-0 w-full h-full object-cover">
                     </div>
-                    <div class="flex flex-col text-left">
-                        <div class="font-header font-black text-2xl tracking-widest text-amber-400 uppercase leading-tight drop-shadow-[0_3px_6px_rgba(0,0,0,0.95)]">
-                            SKK EXCHANGE
-                        </div>
-                        <div class="text-[11px] text-slate-100 font-extrabold uppercase tracking-widest mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
-                            (THB, IDR, MMK, SGD)
-                        </div>
+                    <div class="relative w-3/5 -ml-[20%] h-full overflow-hidden filter brightness-90 saturate-125 bg-right-mask z-0">
+                        <img id="img-bg-right" src="https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=600&auto=format&fit=crop" crossorigin="anonymous" alt="Right BG" class="absolute inset-0 w-full h-full object-cover">
                     </div>
                 </div>
 
-                <div class="flex items-center justify-between px-3 py-0.5">
-                    <div class="flex items-center gap-1.5">
-                        <span id="out-flags" class="text-sm shadow-sm">🇲🇲🇮🇩</span>
-                        <h1 id="out-title" class="font-myanmar font-extrabold text-xs text-gradient drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
-                            မြန်မာ-အင်ဒိုငွေဈေး
-                        </h1>
-                    </div>
-                    <span id="out-datetime" class="bg-purple-950/90 text-purple-200 text-[9px] font-bold px-2 py-0.5 rounded-full border border-purple-400/40 shadow">
-                        24/10/2026 12:50 AM
-                    </span>
+                <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/90 backdrop-blur-[0.5px] z-10"></div>
+
+                <div class="absolute inset-0 pointer-events-none overflow-hidden z-10 opacity-20">
+                    <span class="absolute top-2 left-6 text-5xl font-black text-amber-400 rotate-[-15deg]">💵</span>
+                    <span class="absolute bottom-4 left-16 text-6xl font-black text-emerald-400 rotate-[20deg]">Rp</span>
+                    <span class="absolute top-3 right-8 text-6xl font-black text-yellow-400 rotate-[15deg]">฿</span>
+                    <span class="absolute bottom-6 right-12 text-5xl font-black text-purple-400 rotate-[-25deg]">SGD</span>
                 </div>
 
-                <div id="rate-cards-container" class="grid grid-cols-2 gap-2 my-auto">
-                    <div id="card1-box" class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl px-2.5 py-1.5 border-2 border-amber-400/50 shadow-xl space-y-0.5">
-                        <div class="flex justify-between items-center">
-                            <span id="badge-tier1" class="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase tracking-wide">
-                                mmk သိန်း ၅၀ အောက်
-                            </span>
-                            <span id="label-base1" class="text-[9px] font-black text-cyan-300 bg-cyan-950/80 px-1 py-0.5 rounded border border-cyan-700/60">
-                                MMK 1 သိန်း
-                            </span>
+                <div class="relative z-20 flex flex-col justify-between h-full space-y-0">
+                    
+                    <div class="flex items-center justify-center gap-4 px-4 py-0.5 mx-auto w-full">
+                        <div class="w-20 h-20 flex items-center justify-center flex-shrink-0">
+                            <img id="out-logo" src="logo_3.png" crossorigin="anonymous" alt="SKK Logo" class="w-full h-full object-contain filter drop-shadow-[0_6px_12px_rgba(0,0,0,0.95)] scale-110" onerror="this.onerror=null; this.src='./logo_3.png';">
                         </div>
-                        <div class="flex justify-between items-baseline pt-0.5">
-                            <span id="out-direction1" class="text-[10px] font-extrabold text-slate-300 tracking-wide">MMK to IDR</span>
-                            <span id="out-tier1" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-lg">370,000</span>
+                        <div class="flex flex-col text-left">
+                            <div class="font-header font-black text-2xl tracking-widest text-amber-400 uppercase leading-tight drop-shadow-[0_3px_6px_rgba(0,0,0,0.95)]">
+                                SKK EXCHANGE
+                            </div>
+                            <div class="text-[11px] text-slate-100 font-extrabold uppercase tracking-widest mt-0.5 drop-shadow-[0_2px_4px_rgba(0,0,0,0.95)]">
+                                (THB, IDR, MMK, SGD)
+                            </div>
                         </div>
                     </div>
 
-                    <div id="card2-box" class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl px-2.5 py-1.5 border-2 border-amber-400/50 shadow-xl space-y-0.5">
-                        <div class="flex justify-between items-center">
-                            <span id="badge-tier2" class="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase tracking-wide">
-                                mmk သိန်း ၅၀ အထက်
-                            </span>
-                            <span id="label-base2" class="text-[9px] font-black text-cyan-300 bg-cyan-950/80 px-1 py-0.5 rounded border border-cyan-700/60">
-                                MMK 1 သိန်း
-                            </span>
+                    <div class="flex items-center justify-between px-3 py-0.5">
+                        <div class="flex items-center gap-1.5">
+                            <span id="out-flags" class="text-sm shadow-sm">🇲🇲🇮🇩</span>
+                            <h1 id="out-title" class="font-myanmar font-extrabold text-xs text-gradient drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+                                မြန်မာ-အင်ဒိုငွေဈေး
+                            </h1>
                         </div>
-                        <div class="flex justify-between items-baseline pt-0.5">
-                            <span id="out-direction2" class="text-[10px] font-extrabold text-slate-300 tracking-wide">MMK to IDR</span>
-                            <span id="out-tier2" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-lg">371,000</span>
+                        <span id="out-datetime" class="bg-purple-950/90 text-purple-200 text-[9px] font-bold px-2 py-0.5 rounded-full border border-purple-400/40 shadow">
+                            24/10/2026 12:50 AM
+                        </span>
+                    </div>
+
+                    <div id="rate-cards-container" class="grid grid-cols-2 gap-2 my-auto">
+                        <div id="card1-box" class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl px-2.5 py-1.5 border-2 border-amber-400/50 shadow-xl space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <span id="badge-tier1" class="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase tracking-wide">
+                                    mmk သိန်း ၅၀ အောက်
+                                </span>
+                                <span id="label-base1" class="text-[9px] font-black text-cyan-300 bg-cyan-950/80 px-1 py-0.5 rounded border border-cyan-700/60">
+                                    MMK 1 သိန်း
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-baseline pt-0.5">
+                                <span id="out-direction1" class="text-[10px] font-extrabold text-slate-300 tracking-wide">MMK to IDR</span>
+                                <span id="out-tier1" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-lg">370,000</span>
+                            </div>
+                        </div>
+
+                        <div id="card2-box" class="bg-gradient-to-br from-blue-950/95 via-slate-900/95 to-blue-950/95 rounded-xl px-2.5 py-1.5 border-2 border-amber-400/50 shadow-xl space-y-0.5">
+                            <div class="flex justify-between items-center">
+                                <span id="badge-tier2" class="bg-amber-400 text-slate-950 text-[10px] font-black px-1.5 py-0.5 rounded shadow uppercase tracking-wide">
+                                    mmk သိန်း ၅၀ အထက်
+                                </span>
+                                <span id="label-base2" class="text-[9px] font-black text-cyan-300 bg-cyan-950/80 px-1 py-0.5 rounded border border-cyan-700/60">
+                                    MMK 1 သိန်း
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-baseline pt-0.5">
+                                <span id="out-direction2" class="text-[10px] font-extrabold text-slate-300 tracking-wide">MMK to IDR</span>
+                                <span id="out-tier2" class="text-2xl font-black text-amber-300 tracking-wider drop-shadow-lg">371,000</span>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div id="out-bank-card" class="bg-slate-950/90 border border-amber-400/60 px-2.5 py-1 rounded-lg text-amber-300 text-[10px] font-bold flex items-center justify-between shadow-lg">
-                    <span class="text-slate-300 text-[9px] flex items-center gap-1">💳 Transfer Account:</span>
-                    <span id="out-bank-text" class="text-amber-300 font-extrabold text-[10px] truncate max-w-[400px]"></span>
-                </div>
-
-                <div class="flex items-center justify-between text-[9px] pt-0.5 px-0.5">
-                    <div class="font-myanmar font-semibold text-amber-300 bg-slate-950/80 px-2 py-0.5 rounded-lg border border-amber-500/30 shadow-sm flex items-center gap-1">
-                        <span>⚠️</span><span>ငွေဈေးနှုန်းများသည် အချိန်နှင့်အမျှအပြောင်းအလဲ ရှိသည်</span>
+                    <div id="out-bank-card" class="bg-slate-950/90 border border-amber-400/60 px-2.5 py-1 rounded-lg text-amber-300 text-[10px] font-bold flex items-center justify-between shadow-lg">
+                        <span class="text-slate-300 text-[9px] flex items-center gap-1">💳 Transfer Account:</span>
+                        <span id="out-bank-text" class="text-amber-300 font-extrabold text-[10px] truncate max-w-[400px]"></span>
                     </div>
-                    <div class="flex items-center gap-1 font-bold bg-emerald-950/90 text-emerald-300 py-0.5 px-2 rounded-lg border border-emerald-400/40 shadow-md">
-                        <span>📲 Whatsapp:</span><span id="out-whatsapp" class="text-white font-extrabold">+6281386661075 : +95 943189428</span>
-                    </div>
-                </div>
 
+                    <div class="flex items-center justify-between text-[9px] pt-0.5 px-0.5">
+                        <div class="font-myanmar font-semibold text-amber-300 bg-slate-950/80 px-2 py-0.5 rounded-lg border border-amber-500/30 shadow-sm flex items-center gap-1">
+                            <span>⚠️</span><span>ငွေဈေးနှုန်းများသည် အချိန်နှင့်အမျှအပြောင်းအလဲ ရှိသည်</span>
+                        </div>
+                        <div class="flex items-center gap-1 font-bold bg-emerald-950/90 text-emerald-300 py-0.5 px-2 rounded-lg border border-emerald-400/40 shadow-md">
+                            <span>📲 Whatsapp:</span><span id="out-whatsapp" class="text-white font-extrabold">+6281386661075 : +95 943189428</span>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
@@ -357,7 +381,7 @@
         let isCustomBg = false;
         let isPosterVisible = true;
         
-        let transactions = JSON.parse(localStorage.getItem('skk_transactions')) || [];
+        let transactions = JSON.parse(localStorage.getItem('skk_transactions_v2')) || [];
         const footerThanksText = "\nကျေးဇူးပါခင်မျာ";
 
         const rateMemory = {
@@ -478,6 +502,7 @@
             document.getElementById('in-title').value = config.title;
             document.getElementById('in-direction').value = config.direction;
             document.getElementById('in-flags').value = config.flags;
+            document.getElementById('rec-currency-pair').value = preset;
 
             if (!isCustomBg) {
                 const splitBg = countrySplitBackgrounds[preset] || countrySplitBackgrounds['MMK_IDR'];
@@ -602,8 +627,8 @@
             document.getElementById('calc-formula').textContent = formulaText;
             document.getElementById('snippet-text').textContent = calcSnippet + (bankInfo ? `\nငွေလွှဲရန်အကောင့်: ${bankInfo}` : '') + footerThanksText;
 
-            document.getElementById('rec-in-amt').value = `${formatNumber(amount)} ${units.inUnit}`;
-            document.getElementById('rec-out-amt').value = `${formatNumber(resultVal)} ${units.outUnit}`;
+            document.getElementById('rec-in-amt').value = formatNumber(amount);
+            document.getElementById('rec-out-amt').value = formatNumber(resultVal);
         }
 
         function calculateFromResult() {
@@ -667,8 +692,8 @@
             document.getElementById('calc-formula').textContent = formulaText;
             document.getElementById('snippet-text').textContent = calcSnippet + (bankInfo ? `\nငွေလွှဲရန်အကောင့်: ${bankInfo}` : '') + footerThanksText;
 
-            document.getElementById('rec-in-amt').value = `${formatNumber(inputVal)} ${units.inUnit}`;
-            document.getElementById('rec-out-amt').value = `${formatNumber(resAmount)} ${units.outUnit}`;
+            document.getElementById('rec-in-amt').value = formatNumber(inputVal);
+            document.getElementById('rec-out-amt').value = formatNumber(resAmount);
         }
 
         function getCurrencyUnits(preset) {
@@ -681,37 +706,137 @@
                 case 'THB_MMK': return { inUnit: 'THB', outUnit: 'MMK' };
                 case 'SGD_MMK': return { inUnit: 'SGD', outUnit: 'MMK' };
                 case 'MMK_SGD': return { inUnit: 'MMK', outUnit: 'SGD' };
-                default: return { inUnit: '', outUnit: '' };
+                default: return { inUnit: 'IN', outUnit: 'OUT' };
             }
         }
 
+        /* --- MULTI-CURRENCY ACCOUNTING LEDGER & MONTHLY STATEMENT --- */
+
+        function setCurrentMonthFilter() {
+            document.getElementById('filter-month').value = new Date().toISOString().slice(0, 7);
+            renderTransactionTable();
+        }
+
         function addTransactionRecord() {
-            const name = document.getElementById('rec-name').value.trim() || 'Anonymous';
-            const preset = document.getElementById('preset-switcher').value;
-            const record = { id: Date.now(), date: document.getElementById('filter-date').value, name: name, preset: preset, inAmtRaw: cleanNumber(document.getElementById('rec-in-amt').value), outAmtRaw: cleanNumber(document.getElementById('rec-out-amt').value), bank: document.getElementById('rec-bank').value.trim() || 'N/A' };
+            const date = document.getElementById('rec-date').value || new Date().toISOString().slice(0, 10);
+            const name = document.getElementById('rec-name').value.trim() || 'General Customer';
+            const pair = document.getElementById('rec-currency-pair').value;
+            const inAmtRaw = cleanNumber(document.getElementById('rec-in-amt').value);
+            const outAmtRaw = cleanNumber(document.getElementById('rec-out-amt').value);
+            const bank = document.getElementById('rec-bank').value.trim() || 'N/A';
+
+            if (inAmtRaw === 0 && outAmtRaw === 0) {
+                alert('ကျေးဇူးပြု၍ ပေးချေငွေ သို့မဟုတ် ရရှိငွေ ပမာဏ ထည့်သွင်းပါခင်ဗျာ။');
+                return;
+            }
+
+            const record = { id: Date.now(), date: date, name: name, pair: pair, inAmtRaw: inAmtRaw, outAmtRaw: outAmtRaw, bank: bank };
             transactions.push(record);
-            localStorage.setItem('skk_transactions', JSON.stringify(transactions));
+            localStorage.setItem('skk_transactions_v2', JSON.stringify(transactions));
+            
             document.getElementById('rec-name').value = '';
             renderTransactionTable();
         }
 
-        function renderTransactionTable() {
-            const selectedDate = document.getElementById('filter-date').value;
-            const g1 = transactions.filter(t => t.date === selectedDate && t.preset === 'MMK_IDR');
-            const g2 = transactions.filter(t => t.date === selectedDate && t.preset === 'IDR_MMK');
-
-            document.getElementById('group1-tbody').innerHTML = g1.map(t => `<tr class="border-b border-slate-900"><td class="p-1">${t.name}</td><td class="p-1 text-amber-300">${formatNumber(t.inAmtRaw)}</td><td class="p-1 text-emerald-300">${formatNumber(t.outAmtRaw)}</td></tr>`).join('') || '<tr><td colspan="3" class="p-1 text-slate-500">မရှိပါ</td></tr>';
-            document.getElementById('group2-tbody').innerHTML = g2.map(t => `<tr class="border-b border-slate-900"><td class="p-1">${t.name}</td><td class="p-1 text-cyan-300">${formatNumber(t.inAmtRaw)}</td><td class="p-1 text-amber-300">${formatNumber(t.outAmtRaw)}</td></tr>`).join('') || '<tr><td colspan="3" class="p-1 text-slate-500">မရှိပါ</td></tr>';
-            
-            const sum1 = g1.reduce((a, b) => a + b.inAmtRaw, 0);
-            const sum2 = g2.reduce((a, b) => a + b.inAmtRaw, 0);
-            document.getElementById('group1-total').textContent = `Total: ${formatNumber(sum1)}`;
-            document.getElementById('group2-total').textContent = `Total: ${formatNumber(sum2)}`;
-            document.getElementById('summary-details').textContent = `Net Diff: ${formatNumber(sum1 - sum2)} MMK`;
+        function deleteTransaction(id) {
+            transactions = transactions.filter(t => t.id !== id);
+            localStorage.setItem('skk_transactions_v2', JSON.stringify(transactions));
+            renderTransactionTable();
         }
 
-        function clearAllTransactions() { transactions = []; localStorage.setItem('skk_transactions', '[]'); renderTransactionTable(); }
-        function exportTransactionsCSV() { window.open("data:text/csv;charset=utf-8," + encodeURI("ID,Date,Name,Preset,In,Out,Bank\n" + transactions.map(t=>`${t.id},${t.date},${t.name},${t.preset},${t.inAmtRaw},${t.outAmtRaw},${t.bank}`).join("\n"))); }
+        function renderTransactionTable() {
+            const filterMonth = document.getElementById('filter-month').value;
+            let filtered = transactions;
+
+            if (filterMonth) {
+                filtered = transactions.filter(t => t.date.startsWith(filterMonth));
+                document.getElementById('summary-month-label').textContent = `Month: ${filterMonth}`;
+            } else {
+                document.getElementById('summary-month-label').textContent = 'All Historical Statements';
+            }
+
+            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const tbody = document.getElementById('ledger-tbody');
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-3 text-center text-slate-500 italic">စာရင်းဇယား မရှိသေးပါ (No transactions found)</td></tr>';
+            } else {
+                tbody.innerHTML = filtered.map(t => {
+                    const units = getCurrencyUnits(t.pair);
+                    return `
+                        <tr class="border-b border-slate-900 hover:bg-slate-900/60 transition">
+                            <td class="p-1.5 text-slate-400 font-mono">${t.date}</td>
+                            <td class="p-1.5 font-bold text-slate-200">${t.name}</td>
+                            <td class="p-1.5 text-amber-400 font-bold">${t.pair}</td>
+                            <td class="p-1.5 text-right font-mono text-amber-300 font-bold">${formatNumber(t.inAmtRaw)} <span class="text-[9px] text-slate-500">${units.inUnit}</span></td>
+                            <td class="p-1.5 text-right font-mono text-emerald-300 font-bold">${formatNumber(t.outAmtRaw)} <span class="text-[9px] text-slate-500">${units.outUnit}</span></td>
+                            <td class="p-1.5 text-slate-300 truncate max-w-[100px]">${t.bank}</td>
+                            <td class="p-1.5 text-center">
+                                <button onclick="deleteTransaction(${t.id})" class="text-rose-400 hover:text-rose-300 font-bold px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700">🗑️</button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            renderAccountingSummary(filtered);
+        }
+
+        function renderAccountingSummary(dataList) {
+            const summaryBox = document.getElementById('summary-breakdown');
+            
+            if (dataList.length === 0) {
+                summaryBox.innerHTML = '<div class="col-span-4 text-slate-500 italic">စာရင်းအချက်အလက် မရှိပါသေးပါခင်ဗျာ။</div>';
+                return;
+            }
+
+            const totalsByCurrency = {};
+
+            dataList.forEach(t => {
+                const units = getCurrencyUnits(t.pair);
+                
+                if (!totalsByCurrency[units.inUnit]) totalsByCurrency[units.inUnit] = { cashIn: 0, cashOut: 0 };
+                if (!totalsByCurrency[units.outUnit]) totalsByCurrency[units.outUnit] = { cashIn: 0, cashOut: 0 };
+
+                totalsByCurrency[units.inUnit].cashIn += t.inAmtRaw;
+                totalsByCurrency[units.outUnit].cashOut += t.outAmtRaw;
+            });
+
+            summaryBox.innerHTML = Object.keys(totalsByCurrency).map(curr => {
+                if (curr === 'IN' || curr === 'OUT') return '';
+                const item = totalsByCurrency[curr];
+                const net = item.cashIn - item.cashOut;
+                return `
+                    <div class="bg-slate-900 p-2 rounded border border-slate-800 space-y-0.5">
+                        <div class="font-bold text-amber-300 border-b border-slate-800 pb-0.5">${curr} Summary</div>
+                        <div class="flex justify-between text-slate-400"><span>Cash In:</span><span class="text-amber-300 font-mono">${formatNumber(item.cashIn)}</span></div>
+                        <div class="flex justify-between text-slate-400"><span>Cash Out:</span><span class="text-emerald-300 font-mono">${formatNumber(item.cashOut)}</span></div>
+                        <div class="flex justify-between font-bold border-t border-slate-800 pt-0.5"><span>Net:</span><span class="${net >= 0 ? 'text-emerald-400' : 'text-rose-400'} font-mono">${formatNumber(net)}</span></div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function clearAllTransactions() { 
+            if (confirm("စာရင်းအားလုံးကို ဖျက်ရန် သေချာပါသလားခင်ဗျာ?")) {
+                transactions = []; 
+                localStorage.setItem('skk_transactions_v2', '[]'); 
+                renderTransactionTable(); 
+            }
+        }
+
+        function exportTransactionsCSV() { 
+            if (transactions.length === 0) {
+                alert("ထုတ်ယူရန် စာရင်း မရှိပါခင်ဗျာ။");
+                return;
+            }
+            const csvRows = ["ID,Date,Customer,Pair,CashIn,CashOut,Bank"];
+            transactions.forEach(t => {
+                csvRows.push(`${t.id},${t.date},"${t.name}",${t.pair},${t.inAmtRaw},${t.outAmtRaw},"${t.bank}"`);
+            });
+            window.open("data:text/csv;charset=utf-8," + encodeURI(csvRows.join("\n"))); 
+        }
+
         function copySnippet() { navigator.clipboard.writeText(document.getElementById('snippet-text').textContent.trim()); }
 
         function updatePosterAndCalc() { 
@@ -817,7 +942,9 @@
             }
         }
 
-        async function downloadPoster() {
+        /* --- DOWNLOAD FUNCTION WITH EXACT CORNER CROPPING --- */
+
+        async function downloadPosterWithRatio(pixelRatioVal, filename) {
             const poster = document.getElementById('poster');
             const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
 
@@ -825,12 +952,21 @@
                 await convertPosterImagesToBase64();
                 if (isAppleWebKit) {
                     await htmlToImage.toPng(poster, { cacheBust: true });
-                    await new Promise(resolve => setTimeout(resolve, 400));
+                    await new Promise(resolve => setTimeout(resolve, 350));
                 }
-                const blob = await htmlToImage.toBlob(poster, { quality: 1.0, pixelRatio: 3, cacheBust: true });
+
+                // Explicit width & height bounds to eliminate any extra transform margins
+                const blob = await htmlToImage.toBlob(poster, {
+                    quality: 1.0,
+                    pixelRatio: pixelRatioVal,
+                    width: 640,
+                    height: 330,
+                    cacheBust: true
+                });
+
                 const blobUrl = URL.createObjectURL(blob);
                 const a = document.createElement('a'); 
-                a.download = 'SKK-Exchange-Poster.png'; 
+                a.download = filename; 
                 a.href = blobUrl; 
                 document.body.appendChild(a);
                 a.click();
@@ -842,36 +978,23 @@
             }
         }
 
-        async function downloadPosterLowRes() {
-            const poster = document.getElementById('poster');
-            const isAppleWebKit = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+        function downloadPosterMedium() {
+            downloadPosterWithRatio(1.8, 'SKK-Exchange-Poster.png');
+        }
 
-            try {
-                await convertPosterImagesToBase64();
-                if (isAppleWebKit) {
-                    await htmlToImage.toPng(poster, { cacheBust: true });
-                    await new Promise(resolve => setTimeout(resolve, 400));
-                }
-                const blob = await htmlToImage.toBlob(poster, { quality: 0.8, pixelRatio: 1, cacheBust: true });
-                const blobUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a'); 
-                a.download = 'SKK-Exchange-Poster-LowRes.png'; 
-                a.href = blobUrl; 
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
-            } catch (err) {
-                console.error('Export Error:', err);
-                alert("Poster export Error. Please try again.");
-            }
+        function downloadPosterHighRes() {
+            downloadPosterWithRatio(3.0, 'SKK-Exchange-Poster-HighRes.png');
         }
 
         window.onload = () => {
-            document.getElementById('filter-date').value = new Date().toISOString().slice(0, 10);
+            const todayStr = new Date().toISOString().slice(0, 10);
+            document.getElementById('rec-date').value = todayStr;
+            document.getElementById('filter-month').value = todayStr.slice(0, 7);
+            
             applyPreset();
             updateClock();
             setInterval(updateClock, 1000);
+            renderTransactionTable();
         };
     </script>
 </body>
